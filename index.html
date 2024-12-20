@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penjualan 2 Tahun Terakhir</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #ffb3c1;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        .chart-container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        select {
+            padding: 10px;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Penjualan 2 Tahun Terakhir</h1>
+    <label for="yearSelect">Pilih Tahun:</label>
+    <select id="yearSelect" onchange="filterData()">
+        <option value="all">Semua Tahun</option>
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+    </select>
+    <div id="tableContainer">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Tahun</th>
+                    <th>Januari</th>
+                    <th>Februari</th>
+                    <th>Maret</th>
+                    <th>April</th>
+                    <th>Mei</th>
+                    <th>Juni</th>
+                    <th>Juli</th>
+                    <th>Agustus</th>
+                    <th>September</th>
+                    <th>Oktober</th>
+                    <th>November</th>
+                    <th>Desember</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-year="2023">
+                    <td>2023</td>
+                    <td>3000</td>
+                    <td>4500</td>
+                    <td>5000</td>
+                    <td>4800</td>
+                    <td>6100</td>
+                    <td>5400</td>
+                    <td>5600</td>
+                    <td>5900</td>
+                    <td>6100</td>
+                    <td>5200</td>
+                    <td>7000</td>
+                    <td>6500</td>
+                </tr>
+                <tr data-year="2024">
+                    <td>2024</td>
+                    <td>3200</td>
+                    <td>4600</td>
+                    <td>5200</td>
+                    <td>4900</td>
+                    <td>6300</td>
+                    <td>5500</td>
+                    <td>5700</td>
+                    <td>6000</td>
+                    <td>6200</td>
+                    <td>5300</td>
+                    <td>7200</td>
+                    <td>6600</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="chart-container">
+        <canvas id="salesChart"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const chartData = {
+            2023: [3000, 4500, 5000, 4800, 6100, 5400, 5600, 5900, 6100, 5200, 7000, 6500],
+            2024: [3200, 4600, 5200, 4900, 6300, 5500, 5700, 6000, 6200, 5300, 7200, 6600],
+        };
+
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
+                datasets: [
+                    {
+                        label: '2023',
+                        backgroundColor: 'rgba(255, 182, 193, 0.7)',
+                        borderColor: 'rgba(255, 182, 193, 1)',
+                        borderWidth: 1,
+                        data: chartData[2023],
+                    },
+                    {
+                        label: '2024',
+                        backgroundColor: 'rgba(144, 238, 144, 0.7)',
+                        borderColor: 'rgba(144, 238, 144, 1)',
+                        borderWidth: 1,
+                        data: chartData[2024],
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah Penjualan',
+                        },
+                    },
+                },
+            },
+        });
+
+        function filterData() {
+            const year = document.getElementById('yearSelect').value;
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+
+            rows.forEach(row => {
+                if (year === 'all' || row.dataset.year === year) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            salesChart.data.datasets.forEach(dataset => {
+                dataset.hidden = year !== 'all' && dataset.label !== year;
+            });
+
+            salesChart.update();
+        }
+    </script>
+</body>
+</html>
+
